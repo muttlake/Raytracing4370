@@ -2,7 +2,7 @@ OBJ = main.o
 INC = -I "./"
 
 Rasterrain: $(OBJ)
-	g++ $(OBJ) -o Rasterrain.exe
+	g++ $(OBJ) -o Rasterrain
 	rm -f $(OBJ)
 
 main.o:

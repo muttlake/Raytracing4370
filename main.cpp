@@ -396,12 +396,12 @@ int main(int argc, char *argv[])
 	Plane scene_plane (Y, -1, tile_floor);
 	Triangle scene_triangle (Vect (3, 0, 0), Vect (0, 3, 0), Vect (0, 0, 3), orange);
 
-	//scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
+	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere2));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
 	//scene_objects.push_back(dynamic_cast<Object*>(&scene_triangle));
 	
-	makeCube(Vect(1, 1, 1), Vect(-1, -1, -1), orange);
+	//makeCube(Vect(1, 1, 1), Vect(-1, -1, -1), orange);
 
 	int thisone, aa_index;
 	double xamnt, yamnt;
@@ -545,9 +545,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	savebmp("scene_anti-aliased10.bmp", width, height, dpi, pixels);
+	savebmp("scene_anti-aliased2.bmp", width, height, dpi, pixels);
 
-	delete pixels, tempRed, tempGreen, tempBlue;
+	delete[] pixels;
+	//delete tempRed, tempGreen, tempBlue;
 
 	t2 = clock();
 	float diff = ((float)t2 - (float)t1)/1000;
