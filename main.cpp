@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
 	int n = width*height;
 	RGBType *pixels = new RGBType[n];
 
-	int aadepth = 2; //anti-aliasing depth 1: 4 new rays at each pixel
+	int aadepth = 10; //anti-aliasing depth 1: 4 new rays at each pixel
 	double aathreshold = 0.1;
 
 	double aspectratio = (double)width / (double)height;
@@ -545,7 +545,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	savebmp("scene_anti-aliased2.bmp", width, height, dpi, pixels);
+	savebmp("scene_anti-aliased10.bmp", width, height, dpi, pixels);
 
 	delete[] pixels;
 	//delete tempRed, tempGreen, tempBlue;

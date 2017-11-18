@@ -26,6 +26,7 @@ class Triangle: public Object
 	       normal = CA.crossProduct(BA).normalize();
 	       return normal;
 	}
+
 	double getTriangleDistance() { 
 		normal = getTriangleNormal();
 		distance = normal.dotProduct(A);
