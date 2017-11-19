@@ -21,6 +21,8 @@
 #include "Plane.h"
 #include "Triangle.h"
 
+#include "ObjLoader.h"
+
 using namespace std;
 
 struct RGBType 
@@ -346,7 +348,7 @@ int main(int argc, char *argv[])
 	int n = width*height;
 	RGBType *pixels = new RGBType[n];
 
-	int aadepth = 12; //anti-aliasing depth 1: 4 new rays at each pixel
+	int aadepth = 1; //anti-aliasing depth 1: 4 new rays at each pixel
 	double aathreshold = 0.1;
 
 	double aspectratio = (double)width / (double)height;
