@@ -341,16 +341,15 @@ int main(int argc, char *argv[])
 	t1 = clock();
 
 	int dpi = 72;
-	int width = 640;
-	int height = 480;
+	int width = 800;
+	int height = 600;
 	int n = width*height;
 	RGBType *pixels = new RGBType[n];
 
-	int aadepth = 10; //anti-aliasing depth 1: 4 new rays at each pixel
+	int aadepth = 12; //anti-aliasing depth 1: 4 new rays at each pixel
 	double aathreshold = 0.1;
 
 	double aspectratio = (double)width / (double)height;
-	double ambientlight = 0.2;
 	double accuracy = 0.000001; //accuracy for ray intersection to be on outside of sphere
 
 
@@ -363,6 +362,15 @@ int main(int argc, char *argv[])
 	Vect X (1, 0, 0);
 	Vect Y (0, 1, 0);
 	Vect Z (0, 0, 1);
+
+	//<camera>
+    	//	<position x="0" y="-70" z="15"/>
+    	//	<target x="2" y="0" z="3"/>
+    	//	<up x="0" y="0" z="1"/>
+    	//	<fov value="30"/>
+    	//	<width value="800"/>
+    	//	<height value="600"/>
+  	//</camera>
 
 	Vect campos (3, 1.5, -4);
 	Vect look_at (0, 0, 0);
@@ -377,11 +385,26 @@ int main(int argc, char *argv[])
 
 	Color white_light (1.0, 1.0, 1.0, 0.0);
 	Color pretty_green (0.5, 1.0, 0.5, 0.3);
-	Color maroon (0.5, 0.25, 0.25, 0);
+	Color maroon (0.5, 0.25, 0.25, 0.3);
 	Color orange (0.94, 0.75, 0.31, 0);
 	Color tile_floor (1, 1, 1, 2);
 	Color gray (0.5, 0.5, 0.5, 0);
 	Color black (0.0, 0.0, 0.0, 0.0);
+
+	//<!-- Lights -->
+    	//<light type="ambient" name="ambientLight">
+      	//	<intensity value="0.2"/>
+    	//</light>
+    	//<light type="direct" name="directLight">
+      	//	<intensity value="0.6"/>
+      	//	<direction x="-1" y="0.2" z="-1"/>
+    	//</light>
+    	//<light type="direct" name="directLight">
+      	//	<intensity value="0.4"/>
+      	//	<direction x="1" y="0.3" z="-1"/>
+    	//</light>
+
+	double ambientlight = 0.2;
 
 	Vect light_position (-7, 10, -10);
 	Light scene_light (light_position, white_light);
@@ -390,13 +413,35 @@ int main(int argc, char *argv[])
 
 	// Y is the up-down direction, Z is the depth, X is the left-right
 
+	//<!-- Objects -->
+    	//<object type="plane" name="groundPlane" material="ground">
+      	//	<scale value="1000"/>
+      	//	<rotate angle="30" z="1"/>
+    	//</object>
+    	//<object type="obj" name="teapot.obj" material="bricks">
+      	//	<scale value="0.8"/>
+      	//	<rotate angle="-50" z="1"/>
+      	//	<translate x="2" y="-5" z="0"/>
+    	//</object>
+    	//<object type="sphere" name="sphere1" material="checkerMtl">
+      	//	<scale value="6"/>
+      	//	<translate x="15" y="2" z="6"/>
+    	//</object>
+    	//<object type="sphere" name="sphere2" material="refractive">
+      	//	<scale value="5"/>
+      	//	<translate x="-8" y="-16" z="5"/>
+    	//</object>
+
+
 	//scene objects
-	Sphere scene_sphere (O, 1.0, pretty_green);
+	Vect scene_sphere1_center (15, 2, 6);
+	Sphere scene_sphere1 (O, 1.0, pretty_green);
+	Vect scene_sphere2_center (-8, -16, 5);
 	Sphere scene_sphere2 (new_sphere_location, 0.5, maroon);
 	Plane scene_plane (Y, -1, tile_floor);
 	Triangle scene_triangle (Vect (3, 0, 0), Vect (0, 3, 0), Vect (0, 0, 3), orange);
 
-	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
+	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere1));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere2));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
 	//scene_objects.push_back(dynamic_cast<Object*>(&scene_triangle));
@@ -545,7 +590,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	savebmp("scene_anti-aliased10.bmp", width, height, dpi, pixels);
+	savebmp("scene_anti-aliased12.bmp", width, height, dpi, pixels);
 
 	delete[] pixels;
 	//delete tempRed, tempGreen, tempBlue;
