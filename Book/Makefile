@@ -2,7 +2,7 @@ OBJ = main.o
 INC = -I "./"
 
 Rasterrain: $(OBJ)
-	g++ -std=c++11 $(OBJ) -o Rasterrain
+	g++ -std=c++11 $(OBJ) -o Bookerrain
 	rm -f $(OBJ)
 
 main.o:
