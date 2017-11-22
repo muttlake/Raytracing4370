@@ -31,6 +31,7 @@ public:
 
 	inline vec3& operator*=(const float t);
 	inline vec3& operator/=(const float t);
+	inline vec3  operator/ (const float t);
 
 	inline float length() const
 	{
@@ -170,6 +171,16 @@ inline vec3& vec3::operator/=(const float t)
 	e[1] *= k;
 	e[2] *= k;
 	return *this;
+}
+
+inline vec3 vec3::operator/(const float t)
+{
+	float k = 1.0/t;
+	vec3 v;
+	v.e[0] = e[0] * k;
+	v.e[1] = e[1] * k;
+	v.e[2] = e[2] * k;
+	return v;
 }
 
 inline vec3 unit_vector(vec3 v)
