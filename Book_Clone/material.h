@@ -5,6 +5,9 @@ struct hit_record;
 
 #include "ray.h"
 #include "hitable.h"
+#include "texture.h"
+
+//class texture;
 
 
 float schlick(float cosine, float ref_idx) {
@@ -47,15 +50,16 @@ class material  {
 
 class lambertian : public material {
     public:
-        lambertian(const vec3& a) : albedo(a) {}
+        lambertian(texture *a) : albedo(a) {}
         virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
              vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+             //vec3 target = rec.p + rec.normal;
              scattered = ray(rec.p, target-rec.p);
-             attenuation = albedo;
+             attenuation = albedo->value(0, 0, rec.p);
              return true;
         }
 
-        vec3 albedo;
+        texture *albedo;
 };
 
 class metal : public material {
@@ -85,7 +89,7 @@ class dielectric : public material {
              if (dot(r_in.direction(), rec.normal) > 0) {
                   outward_normal = -rec.normal;
                   ni_over_nt = ref_idx;
-         //         cosine = ref_idx * dot(r_in.direction(), rec.normal) / r_in.direction().length();
+         	  //cosine = ref_idx * dot(r_in.direction(), rec.normal) / r_in.direction().length();
                   cosine = dot(r_in.direction(), rec.normal) / r_in.direction().length();
                   cosine = sqrt(1 - ref_idx*ref_idx*(1-cosine*cosine));
              }
