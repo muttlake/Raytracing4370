@@ -23,6 +23,7 @@ class sphere: public hitable  {
 
 bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center;
+	get_sphere_uv( (rec.p - center)/radius, rec.u, rec.v); 
     float a = dot(r.direction(), r.direction());
     float b = dot(oc, r.direction());
     float c = dot(oc, oc) - radius*radius;

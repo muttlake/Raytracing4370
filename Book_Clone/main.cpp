@@ -7,6 +7,19 @@
 #include "material.h"
 #include "texture.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+
+material* loadBrickTexture()
+{
+	int nx, ny, nn;
+	unsigned char *tex_data = stbi_load("/Users/timothyshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
+	material *mat = new lambertian(new image_texture(tex_data, nx, ny));
+	int len = sizeof(mat)/sizeof(material);
+	//std::cout << "Size of Material: " << len << "\n";
+	return mat;
+}
 
 vec3 color(const ray& r, hitable *world, int depth) {
     hit_record rec;
@@ -14,14 +27,15 @@ vec3 color(const ray& r, hitable *world, int depth) {
     {
         ray scattered;
         vec3 attenuation;
-        if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-	{
+		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+		{
              return attenuation*color(scattered, world, depth+1);
-        }
-        else
-	{
+             //return attenuation;
+		}
+		else
+		{
             return vec3(0,0,0);
-        }
+		}
     }
     else
     {
@@ -74,7 +88,8 @@ hitable *project_scene() {
     list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     list[2] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
-    list[3] = new sphere(vec3(2, -5, 5.5), 5.5, new lambertian(new constant_texture(vec3(1.0, 1.0, 1.0))));
+    list[3] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
+    //list[3] = new sphere(vec3(2, -5, 5.5), 5.5, new lambertian(checker));
 
     //hitable **test = new hitable*[1];
     //test[0] = new plane(vec3(0,0,1), 100.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
@@ -117,6 +132,7 @@ int main() {
         }
     }
 }
+
 
 
 
