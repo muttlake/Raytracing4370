@@ -14,9 +14,9 @@
 material* loadBrickTexture()
 {
 	int nx, ny, nn;
-	unsigned char *tex_data = stbi_load("/Users/timothyshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
+	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
 	material *mat = new lambertian(new image_texture(tex_data, nx, ny));
-	int len = sizeof(mat)/sizeof(material);
+	//int len = sizeof(mat)/sizeof(material);
 	//std::cout << "Size of Material: " << len << "\n";
 	return mat;
 }
@@ -27,15 +27,15 @@ vec3 color(const ray& r, hitable *world, int depth) {
     {
         ray scattered;
         vec3 attenuation;
-		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-		{
-             return attenuation*color(scattered, world, depth+1);
-             //return attenuation;
-		}
-		else
-		{
-            return vec3(0,0,0);
-		}
+	if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+	{
+       		return attenuation*color(scattered, world, depth+1);
+             	//return attenuation;
+	}
+	else
+	{
+        	return vec3(0,0,0);
+	}
     }
     else
     {
@@ -132,6 +132,7 @@ int main() {
         }
     }
 }
+
 
 
 
