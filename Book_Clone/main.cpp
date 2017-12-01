@@ -14,7 +14,7 @@
 material* loadBrickTexture()
 {
 	int nx, ny, nn;
-	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
+	unsigned char *tex_data = stbi_load("/Users/timothyshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
 	material *mat = new lambertian(new image_texture(tex_data, nx, ny));
 	//int len = sizeof(mat)/sizeof(material);
 	//std::cout << "Size of Material: " << len << "\n";
@@ -132,6 +132,7 @@ int main() {
         }
     }
 }
+
 
 
 
