@@ -80,16 +80,20 @@ hitable *random_scene() {
 hitable *project_scene() {
     int n = 4;
 
-    texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)));
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.5);
+
+    texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.5);
 
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
     //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
     list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
-    list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
+    //list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+    list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
     list[2] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
     list[3] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
-    //list[3] = new sphere(vec3(2, -5, 5.5), 5.5, new lambertian(checker));
+    //list[3] = new sphere(vec3(2, -5, 5.5), 5.5, new lambertian( new constant_texture(vec3(0.7, 0.3, 0.3))));
 
     //hitable **test = new hitable*[1];
     //test[0] = new plane(vec3(0,0,1), 100.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));

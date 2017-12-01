@@ -26,16 +26,18 @@ class checker_texture: public texture
 {
 	public:
 		checker_texture() { }
-		checker_texture(texture *t0, texture *t1): even(t0), odd(t1) { }
+		checker_texture(texture *t0, texture *t1, float s): even(t0), odd(t1), sine_multiplier(s) { }
 
 		virtual vec3 value(float u, float v, const vec3& p) const
 		{
-			float sines = sin(0.5*p.x() ) * sin(0.5*p.y()) * sin(0.5*p.z() + M_PI/6);
+			float sines = sin(sine_multiplier*p.x() ) * sin(sine_multiplier*p.y()) * sin(sine_multiplier*p.z());
 			if (sines < 0)
 				return odd->value(u, v, p);
 			else
 				return even->value(u, v, p);
 		}
+
+		float sine_multiplier;
 
 		texture *odd;
 		texture *even;
