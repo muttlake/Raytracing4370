@@ -96,12 +96,14 @@ hitable *project_scene() {
 
     texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.5);
 
+    texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.9, 0.9, 0.9)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
+
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
     //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
     //list[0] = new xy_plane(-1000.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
     //list[0] = new xy_plane(0.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
-    list[0] = new xy_plane(0.0, new lambertian(checker));
+    list[0] = new xy_plane(0.0, new lambertian(plane_checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new metal(vec3(0.7, 0.6, 0.5), 0.0));

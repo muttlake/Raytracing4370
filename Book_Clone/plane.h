@@ -27,8 +27,8 @@ bool xy_plane::hit(const ray& r, float t0, float t1, hit_record& rec) const {
     //    return false;
     //rec.u = (x-x0)/(x1-x0);
     //rec.v = (y-y0)/(y1-y0); 
-    rec.u = x;
-    rec.v = y;
+    rec.u = 0.5;
+    rec.v = 0.5;
     rec.t = t;
     rec.mat_ptr = mp;
     rec.p = r.point_at_parameter(t);

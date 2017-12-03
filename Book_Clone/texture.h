@@ -1,7 +1,10 @@
 #ifndef TEXTUREH
 #define TEXTUREH 
 
-//#include "hitable.h"
+#include <glm_dir/glm/glm.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm_dir/glm/gtx/rotate_vector.hpp>
 
 
 class texture
@@ -39,6 +42,36 @@ class checker_texture: public texture
 
 		float sine_multiplier;
 
+		texture *odd;
+		texture *even;
+};
+
+
+class plane_checker_texture: public texture
+{
+	public:
+		plane_checker_texture() { }
+		plane_checker_texture(texture *t0, texture *t1, float _r): even(t0), odd(t1), r(_r) { }
+
+		virtual vec3 value(float u, float v, const vec3& p) const
+		{
+			//glm::vec3 xyVector = glm::vec3(p.x(), p.y(), 0.0);
+			//glm::mat4 R = glm::gtx::rotate(glm::radians(r), glm::vec3(0.0, 0.0, 1.0));
+			//glm::vec3 rotated_xyVector = R * xyVector;
+
+			glm::vec2 xyVector = glm::vec2(p.x(), p.y());
+			glm::vec2 rotated_xyVector = glm::rotate(xyVector, glm::radians(r));
+			
+			//int square = (int)floor(p.x()*0.1) + (int)floor(p.y()*0.1);
+			int square = (int)floor(rotated_xyVector[0]*0.1) + (int)floor(rotated_xyVector[1]*0.1);
+
+			if ((square % 2) == 0)
+				return odd->value(u, v, p);
+			else
+				return even->value(u, v, p);
+		}
+
+		float r;
 		texture *odd;
 		texture *even;
 };
