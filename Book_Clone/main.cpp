@@ -103,10 +103,11 @@ hitable *project_scene() {
     //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
     //list[0] = new xy_plane(-1000.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
     //list[0] = new xy_plane(0.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
-    list[0] = new xy_plane(0.0, new lambertian(plane_checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+    //list[0] = new xy_plane(0.0, new lambertian(plane_checker));
+    list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     //list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
     list[2] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
