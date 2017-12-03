@@ -23,7 +23,6 @@ class sphere: public hitable  {
 
 bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center;
-	get_sphere_uv( (rec.p - center)/radius, rec.u, rec.v); 
     float a = dot(r.direction(), r.direction());
     float b = dot(oc, r.direction());
     float c = dot(oc, oc) - radius*radius;
@@ -33,6 +32,7 @@ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const 
         if (temp < t_max && temp > t_min) {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
+            get_sphere_uv( (rec.p - center)/radius, rec.u, rec.v); 
             rec.normal = (rec.p - center) / radius;
             rec.mat_ptr = mat_ptr;
             return true;
@@ -41,6 +41,7 @@ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const 
         if (temp < t_max && temp > t_min) {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
+            get_sphere_uv( (rec.p - center)/radius, rec.u, rec.v); 
             rec.normal = (rec.p - center) / radius;
             rec.mat_ptr = mat_ptr;
             return true;

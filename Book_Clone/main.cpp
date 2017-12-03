@@ -14,10 +14,8 @@
 material* loadBrickTexture()
 {
 	int nx, ny, nn;
-	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
+	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/raytracingthenextweek/bricks.png", &nx, &ny, &nn, 0);
 	material *mat = new lambertian(new image_texture(tex_data, nx, ny));
-	//int len = sizeof(mat)/sizeof(material);
-	//std::cout << "Size of Material: " << len << "\n";
 	return mat;
 }
 
@@ -80,7 +78,7 @@ hitable *random_scene() {
 hitable *project_scene() {
     int n = 4;
 
-    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.5);
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
 
     texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.5);
 
@@ -89,6 +87,7 @@ hitable *project_scene() {
     //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
     list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     //list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
     list[2] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
