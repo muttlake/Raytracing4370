@@ -40,6 +40,7 @@ vec3 color(const ray& r, hitable *world, int depth) {
         vec3 unit_direction = unit_vector(r.direction());
         float t = 0.5*(unit_direction.y() + 1.0);
         return (1.0-t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
+        //return vec3(1.0, 1.0, 1.0);
     }
 }
 
@@ -96,7 +97,7 @@ hitable *project_scene() {
 
     texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.5);
 
-    texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.9, 0.9, 0.9)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
+    texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
