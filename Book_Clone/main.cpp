@@ -75,6 +75,20 @@ hitable *random_scene() {
     return new hitable_list(list,i);
 }
 
+hitable *test_scene() {
+    int n = 1;
+
+    texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.10);
+
+    float plane_angle = 30*M_PI/180;
+    hitable **list = new hitable*[n+1];
+    list[0] = new xy_plane(-1000.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
+
+    return new hitable_list(list,n);
+}
+
+
 hitable *project_scene() {
     int n = 4;
 
@@ -85,7 +99,10 @@ hitable *project_scene() {
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
     //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
-    list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
+    //list[0] = new xy_plane(-1000.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    //list[0] = new xy_plane(0.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    list[0] = new xy_plane(0.0, new lambertian(checker));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
     //list[0] = new sphere(vec3(0,0,-10000), 10000, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     //list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
@@ -108,13 +125,14 @@ int main() {
     float R = cos(M_PI/4);
     hitable *world;
     world = project_scene();
+    //world = test_scene();
 
     vec3 lookfrom2(0, -70, 15);
     vec3 lookat2(2, 0, 3);
     vec3 up2(0, 0, 1);
     float fov2 = 30;
 
-    camera cam(lookfrom2, lookat2, vec3(0,0,1), fov2, float(nx)/float(ny));
+    camera cam(lookfrom2, lookat2, up2, fov2, float(nx)/float(ny));
 
     for (int j = ny-1; j >= 0; j--) {
         for (int i = 0; i < nx; i++) {
