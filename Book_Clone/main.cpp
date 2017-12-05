@@ -213,8 +213,7 @@ triangle* loadTeapotObj() {
 			outFile << "	u_value: " << u_value << std::endl;
 			outFile << "	v_value: " << v_value << std::endl;
 			
-			triangle tri(vert0, vert1, vert2, normal, u_value, v_value, mp);
-			all_triangles[t_index] = tri;
+			all_triangles[t_index] = triangle(vert0, vert1, vert2, normal, u_value, v_value, mp);
 			
 			t_index++;
 		}
@@ -271,21 +270,30 @@ hitable *first_triangle_project_scene() {
 }
 
 hitable *project_scene() {
-    int n = 4;
 
     //Loading Triangles for Teapot
     triangle* all_teapot_triangles = loadTeapotObj();
+    //NUM_TEAPOT_TRIANGLES = 6320;
 
     texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
-    float plane_angle = 30*M_PI/180;
-    hitable **list = new hitable*[n+1];
+    int n = 30;
+    hitable **list = new hitable*[n];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-    //list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
-    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
-    list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
+    list[2] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
+    
+    int teapotIncrement = int(NUM_TEAPOT_TRIANGLES / (n - 3));
+    std::cout << "teapot Increment: " << teapotIncrement << std::endl;
+    int current_teapot_index = 0;
+    for (int ii = 3; ii < n; ii++)
+    {
+	
+	list[ii] = &all_teapot_triangles[current_teapot_index];
+	current_teapot_index += teapotIncrement;
+    }
+    
 
     delete[] all_teapot_triangles;
 
