@@ -10,11 +10,13 @@
 #include "ObjHandler.h"
 #include "OBJ-Loader/Source/OBJ_Loader.h"
 #include <glm_dir/glm/glm.hpp>
-//#include <glm_dir/glm/gtx/transform.hpp>
 #include <glm_dir/glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm_dir/glm/gtx/transform.hpp>
 
 int NUM_TEAPOT_VERTICES = 18960;
 int NUM_TEAPOT_TRIANGLES = 6320;
@@ -107,20 +109,48 @@ triangle* loadTeapotObj() {
 	int numVertices = loader.LoadedMeshes[0].Vertices.size();
         glm::vec3* vpositions;
         vpositions = handler.buildPositionsVec3sFromObj(loader);
-        //printAllPositions(vpositions, numVertices);
 
 	glm::vec3* vnormals;
         vnormals = handler.buildNormalsVec3sFromObj(loader);
-        //printAllNormals(vnormals, numVertices);
 
         glm::vec2* vtex_coords;
         vtex_coords = handler.buildTexCoordVec2sFromObj(loader);
-        //printAllTexCoords(vtex_coords, numVertices);
-	
+
 	std::string outFileName = "contentsObj.txt";
 	std::ofstream outFile;
     	outFile.open(outFileName);
 	
+	outFile << "Num Indices: " << numIndices << std::endl;
+	outFile << "Num Vertices: " << numVertices << std::endl;
+
+	handler.printAllIndices(vindices, numIndices, outFile);
+	handler.printAllPositions(vpositions, numVertices, outFile);
+	handler.printAllNormals(vnormals, numVertices, outFile);
+	handler.printAllTexCoords(vtex_coords, numVertices, outFile);
+
+    	outFile.close();
+
+	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(0.8f, 0.8f, 0.8f));
+	glm::mat4 R = glm::rotate(glm::mat4(1.0f), glm::radians(-50.0f), glm::vec3(0,0,1));
+	glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, -5.0f, 0.0f));
+	glm::mat4 M = T * R * S;
+	
+	for (int v_index = 0; v_index < NUM_TEAPOT_VERTICES; v_index++)
+	{
+		glm::vec3 v = vpositions[v_index];
+		glm::vec4 transformed_v = glm::vec4(v[0], v[1], v[2], 1.0f);
+		transformed_v = M * transformed_v;
+		vpositions[v_index] = glm::vec3(transformed_v[0], transformed_v[1], transformed_v[2]);
+
+		glm::vec3 n = vnormals[v_index];
+		glm::vec4 transformed_n = glm::vec4(n[0], n[1], n[2], 1.0f);
+		transformed_n = M * transformed_n;
+		vnormals[v_index] = glm::vec3(transformed_n[0], transformed_n[1], transformed_n[2]);
+	}
+
+	outFileName = "contentsObj_World.txt";
+	outFile.open(outFileName);
+
 	outFile << "Num Indices: " << numIndices << std::endl;
 	outFile << "Num Vertices: " << numVertices << std::endl;
 
@@ -202,8 +232,6 @@ triangle* loadTeapotObj() {
 
 
 
-
-
 hitable *test_scene() {
     int n = 1;
 
@@ -213,6 +241,19 @@ hitable *test_scene() {
     return new hitable_list(list,n);
 }
 
+
+hitable *spheres_only_project_scene() {
+    int n = 4;
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
+    texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
+
+    hitable **list = new hitable*[n+1];
+    list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
+    list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
+    list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
+    list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
+    return new hitable_list(list,n);
+}
 
 hitable *project_scene() {
     int n = 4;
@@ -259,7 +300,8 @@ int main(int argc, char *argv[]) {
     outFile << "P3\n" << nx << " " << ny << "\n255\n";
     float R = cos(M_PI/4);
     hitable *world;
-    world = project_scene();
+    //world = project_scene();
+    world = spheres_only_project_scene();
     //world = test_scene();
 
     vec3 lookfrom2(0, -70, 15);
