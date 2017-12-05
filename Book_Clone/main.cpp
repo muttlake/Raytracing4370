@@ -98,7 +98,6 @@ hitable *random_scene() {
 triangle* loadTeapotObj() {
 	objl::Loader loader;
 	loader.LoadFile("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/teapot2.obj");
-	//printf("\nLoaded teapot.obj\n\n");
 	ObjHandler handler;
 	handler.printObjContents(loader);
         
@@ -257,25 +256,38 @@ hitable *spheres_only_project_scene() {
     return new hitable_list(list,n);
 }
 
+hitable *first_triangle_project_scene() {
+    int n = 4;
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
+    texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
+
+    hitable **list = new hitable*[n+1];
+    list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
+    list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
+    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
+
+    return new hitable_list(list,n);
+}
+
 hitable *project_scene() {
     int n = 4;
 
+    //Loading Triangles for Teapot
+    triangle* all_teapot_triangles = loadTeapotObj();
+
     texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
-
-    texture *checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.9, 0.9)), 0.5);
-
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-
     //list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
     list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
-
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
-    //test[0] = new plane(vec3(0,0,1), 100.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+
+    delete[] all_teapot_triangles;
 
     return new hitable_list(list,n);
 }
@@ -296,15 +308,14 @@ int main(int argc, char *argv[]) {
     int ny = 600;
     int ns = 10;
 
-    //Loading Triangles for Teapot
-    triangle* all_teapot_triangles = loadTeapotObj();
 
     outFile << "P3\n" << nx << " " << ny << "\n255\n";
     float R = cos(M_PI/4);
     hitable *world;
-    //world = project_scene();
-    world = spheres_only_project_scene();
     //world = test_scene();
+    //world = spheres_only_project_scene();
+    //world = first_triangle_project_scene();
+    world = project_scene();
 
     vec3 lookfrom2(0, -70, 15);
     vec3 lookat2(2, 0, 3);
@@ -333,8 +344,6 @@ int main(int argc, char *argv[]) {
     }
 
     outFile.close();
-
-    delete[] all_teapot_triangles;
 
     return 0;
 }
