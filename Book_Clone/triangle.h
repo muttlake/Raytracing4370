@@ -7,10 +7,10 @@
 class triangle: public hitable  {
     public:
         triangle() {}
-        triangle(vec3 _v0, vec3 _v1, vec3 _v2, float _u, float _v, material *mat) : v0(_v0), v1(_v1), v2(_v2), tex_u(_u), tex_v(_v), mp(mat) {};
+        triangle(vec3 _v0, vec3 _v1, vec3 _v2, vec3 _n, float _u, float _v, material *mat) : v0(_v0), v1(_v1), v2(_v2), n(_n), tex_u(_u), tex_v(_v), mp(mat) {};
         virtual bool hit(const ray& r, float t0, float t1, hit_record& rec) const;
         vec3 v0, v1, v2;
-	//vec3 n;
+	vec3 n;
 	float tex_u, tex_v;
         material  *mp;
 };

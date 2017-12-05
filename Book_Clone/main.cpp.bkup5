@@ -7,11 +7,7 @@
 #include "camera.h"
 #include "material.h"
 #include "texture.h"
-#include "ObjHandler.h"
-#include "OBJ-Loader/Source/OBJ_Loader.h"
-#include <glm_dir/glm/glm.hpp>
-//#include <glm_dir/glm/gtx/transform.hpp>
-#include <glm_dir/glm/gtc/type_ptr.hpp>
+#include "ObjLoader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -91,58 +87,11 @@ hitable *random_scene() {
     return new hitable_list(list,i);
 }
 
-void loadTeapotObj() {
-	objl::Loader loader;
-	loader.LoadFile("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/teapot2.obj");
-	//printf("\nLoaded teapot.obj\n\n");
-	ObjHandler handler;
-	handler.printObjContents(loader);
-        
-        int numIndices = loader.LoadedMeshes[0].Indices.size();
-        uint* vindices;
-        vindices = handler.buildIndicesListFromObj(loader);
-
-	int numVertices = loader.LoadedMeshes[0].Vertices.size();
-        glm::vec3* vpositions;
-        vpositions = handler.buildPositionsVec3sFromObj(loader);
-        //printAllPositions(vpositions, numVertices);
-
-	glm::vec3* vnormals;
-        vnormals = handler.buildNormalsVec3sFromObj(loader);
-        //printAllNormals(vnormals, numVertices);
-
-        glm::vec2* vtex_coords;
-        vtex_coords = handler.buildTexCoordVec2sFromObj(loader);
-        //printAllTexCoords(vtex_coords, numVertices);
-	
-	std::string outFileName = "contentsObj.txt";
-	std::ofstream outFile;
-    	outFile.open(outFileName);
-	
-	outFile << "Num Indices: " << numIndices << std::endl;
-	outFile << "Num Vertices: " << numVertices << std::endl;
-
-	handler.printAllIndices(vindices, numIndices, outFile);
-	handler.printAllPositions(vpositions, numVertices, outFile);
-	handler.printAllNormals(vnormals, numVertices, outFile);
-	handler.printAllTexCoords(vtex_coords, numVertices, outFile);
-
-    	outFile.close();
-	
-	delete[] vindices;
-	delete[] vpositions;
-	delete[] vnormals;
-	delete[] vtex_coords;
-}
-
-
-
-
 hitable *test_scene() {
     int n = 1;
 
     hitable **list = new hitable*[n+1];
-    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
 
     return new hitable_list(list,n);
 }
@@ -159,38 +108,34 @@ hitable *project_scene() {
 
     float plane_angle = 30*M_PI/180;
     hitable **list = new hitable*[n+1];
+    //list[0] = new plane(vec3(0, 0, 1), 1.0, new lambertian(checker));
+    //list[0] = new xy_plane(-1000.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    //list[0] = new xy_plane(0.0, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new lambertian(checker));
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new texture_metal(checker, 0.0));
+    //texture* loadSphereCheckerTexture()
+    //list[0] = new sphere(vec3(0,0,-10000), 10000, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+    //list[0] = new xy_plane(0.0, new lambertian(plane_checker));
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
+    //list[1] = new sphere(vec3(15, 2, 6), 6.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-
+    //list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(loadSphereCheckerTexture(), 0.0));
     //list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
-    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
-
+    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
+    //list[3] = new sphere(vec3(2, -5, 5.5), 5.5, new lambertian( new constant_texture(vec3(0.7, 0.3, 0.3))));
+
+    //hitable **test = new hitable*[1];
     //test[0] = new plane(vec3(0,0,1), 100.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
     return new hitable_list(list,n);
 }
 
-int main(int argc, char *argv[]) {
-    if(argc != 2)
-    {
-	std::cout << "usage: " << argv[0] << " <ppm_file_name>\n";
-	return 1;
-    }
-    
-    std::string outfilename = argv[1];
-
-    std::ofstream outFile;
-    outFile.open(outfilename);
-
+int main() {
     int nx = 800;
     int ny = 600;
     int ns = 10;
-
-    //Loading Triangles for Teapot
-    loadTeapotObj();
-
-    outFile << "P3\n" << nx << " " << ny << "\n255\n";
+    std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     float R = cos(M_PI/4);
     hitable *world;
     world = project_scene();
@@ -218,13 +163,8 @@ int main(int argc, char *argv[]) {
             int ir = int(255.99*col[0]); 
             int ig = int(255.99*col[1]); 
             int ib = int(255.99*col[2]); 
-            outFile << ir << " " << ig << " " << ib << "\n";
+            std::cout << ir << " " << ig << " " << ib << "\n";
         }
     }
-
-    outFile.close();
-
-    return 0;
 }
-
 
