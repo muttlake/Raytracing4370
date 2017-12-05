@@ -16,6 +16,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+int NUM_TEAPOT_VERTICES = 18960;
+int NUM_TEAPOT_TRIANGLES = 6320;
 
 material* loadBrickTexture()
 {
@@ -91,7 +93,7 @@ hitable *random_scene() {
     return new hitable_list(list,i);
 }
 
-void loadTeapotObj() {
+triangle* loadTeapotObj() {
 	objl::Loader loader;
 	loader.LoadFile("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/teapot2.obj");
 	//printf("\nLoaded teapot.obj\n\n");
@@ -128,12 +130,76 @@ void loadTeapotObj() {
 	handler.printAllTexCoords(vtex_coords, numVertices, outFile);
 
     	outFile.close();
+
+	outFileName = "TrianglesMade.txt";
+	outFile.open(outFileName);
+
+	triangle *all_triangles;
+	all_triangles = new triangle[NUM_TEAPOT_TRIANGLES];
+	int t_index = 0;
+	outFile << "NUM_TEAPOT_TRIANGLES: " << NUM_TEAPOT_TRIANGLES << std::endl;
+	outFile << "NUM_TEAPOT_VERTICES: " << NUM_TEAPOT_VERTICES << std::endl;
+
+	vec3 vert0, vert1, vert2;
+	vec3 n0, n1, n2;
+	float u0, u1, u2;
+	float v0, v1, v2;
+	material* mp = loadBrickTexture();
+
+	for (int v_index = 0; v_index < NUM_TEAPOT_VERTICES; v_index++)
+	{
+		
+		if (((v_index+1) % 3) == 1)
+		{
+			vert0 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
+			n0 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
+			u0 = vtex_coords[v_index][0];
+			v0 = vtex_coords[v_index][1];
+		}
+		else if (((v_index+1) % 3) == 2)
+		{
+			vert1 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
+			n1 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
+			u1 = vtex_coords[v_index][0];
+			v1 = vtex_coords[v_index][1];
+		}
+		else // (((v_index+1) % 3) == 0)
+		{
+			vert2 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
+			n2 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
+			u2 = vtex_coords[v_index][0];
+			v2 = vtex_coords[v_index][1];
+			
+			vec3 normal = (n0 + n1 + n2) / 3;
+			float u_value = (u0 + u1 + u2) / 3;
+			float v_value = (v0 + v1 + v2) / 3;
+			
+			outFile << "Triangle : " << t_index << std::endl;
+			outFile << "	vert0: " << vert0[0] << " , " << vert0[1] << " , " << vert0[2] << std::endl;
+			outFile << "	vert1: " << vert1[0] << " , " << vert1[1] << " , " << vert1[2] << std::endl;
+			outFile << "	vert2: " << vert2[0] << " , " << vert2[1] << " , " << vert2[2] << std::endl;
+			outFile << "	normal: " << normal[0] << " , " << normal[1] << " , " << normal[2] << std::endl;
+			outFile << "	u_value: " << u_value << std::endl;
+			outFile << "	v_value: " << v_value << std::endl;
+			
+			triangle tri(vert0, vert1, vert2, normal, u_value, v_value, mp);
+			all_triangles[t_index] = tri;
+			
+			t_index++;
+		}
+	}
+
+	outFile.close();
 	
 	delete[] vindices;
 	delete[] vpositions;
 	delete[] vnormals;
 	delete[] vtex_coords;
+	
+	return all_triangles;
 }
+
+
 
 
 
@@ -188,7 +254,7 @@ int main(int argc, char *argv[]) {
     int ns = 10;
 
     //Loading Triangles for Teapot
-    loadTeapotObj();
+    triangle* all_teapot_triangles = loadTeapotObj();
 
     outFile << "P3\n" << nx << " " << ny << "\n255\n";
     float R = cos(M_PI/4);
@@ -223,6 +289,8 @@ int main(int argc, char *argv[]) {
     }
 
     outFile.close();
+
+    delete[] all_teapot_triangles;
 
     return 0;
 }
