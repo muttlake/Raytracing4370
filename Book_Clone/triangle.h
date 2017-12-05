@@ -4,6 +4,15 @@
 #include "hitable.h"
 
 
+void get_triangle_uv(const vec3& p, float& u, float& v)
+{
+	float phi = atan2(p.z(), p.x());
+	float theta = asin(p.y());
+	u = 1 - (phi + M_PI) / (2 * M_PI);
+	v = (theta + M_PI/2) / M_PI;
+}
+
+
 class triangle: public hitable  {
     public:
         triangle() {}
@@ -49,12 +58,20 @@ bool triangle::hit(const ray& r, float t0, float t1, hit_record& rec) const
     float t = f * dot(edge2, q);
     if (t > EPSILON) // ray intersection
     {
-        rec.p = r.point_at_parameter(t);
-        rec.u = u;
-        rec.v = v;
-        rec.t = t;
-        rec.mat_ptr = mp;
-        return true;
+	if (t < t0 || t > t1)
+	{
+		return false;
+	}
+	else
+	{
+	        rec.p = r.point_at_parameter(t);
+	        rec.u = tex_u;
+	        rec.v = tex_v;
+	        rec.t = t;
+	        rec.mat_ptr = mp;
+		rec.normal = n;
+	        return true;
+	}
     }
     else // This means that there is a line intersection but not a ray intersection.
         return false;
@@ -62,5 +79,4 @@ bool triangle::hit(const ray& r, float t0, float t1, hit_record& rec) const
 
 
 #endif
-
 

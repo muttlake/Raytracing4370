@@ -21,7 +21,7 @@
 int NUM_TEAPOT_VERTICES = 18960;
 int NUM_TEAPOT_TRIANGLES = 6320;
 
-material* loadBrickTexture()
+material* loadBrickMaterial()
 {
 	int nx, ny, nn;
 	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
@@ -175,7 +175,7 @@ triangle* loadTeapotObj() {
 	vec3 n0, n1, n2;
 	float u0, u1, u2;
 	float v0, v1, v2;
-	material* mp = loadBrickTexture();
+	material* mp = loadBrickMaterial();
 
 	for (int v_index = 0; v_index < NUM_TEAPOT_VERTICES; v_index++)
 	{
@@ -236,7 +236,7 @@ hitable *test_scene() {
     int n = 1;
 
     hitable **list = new hitable*[n+1];
-    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), vec3(0,0,1), 0.5, 0.5, loadBrickMaterial());
 
     return new hitable_list(list,n);
 }
@@ -250,7 +250,7 @@ hitable *spheres_only_project_scene() {
     hitable **list = new hitable*[n+1];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-    list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickTexture());
+    list[2] = new sphere(vec3(2, -5, 5.5), 5.5, loadBrickMaterial());
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
     return new hitable_list(list,n);
 }
@@ -263,7 +263,7 @@ hitable *first_triangle_project_scene() {
     hitable **list = new hitable*[n+1];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, new lambertian(new constant_texture(vec3(0.8, 0.1, 0.1))));
+    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, loadBrickMaterial());
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
 
     return new hitable_list(list,n);
@@ -278,7 +278,7 @@ hitable *project_scene() {
     texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
-    int n = 100;
+    int n = 6323;
     hitable **list = new hitable*[n];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
@@ -322,8 +322,8 @@ int main(int argc, char *argv[]) {
     hitable *world;
     //world = test_scene();
     //world = spheres_only_project_scene();
-    //world = first_triangle_project_scene();
-    world = project_scene();
+    world = first_triangle_project_scene();
+    //world = project_scene();
 
     vec3 lookfrom2(0, -70, 15);
     vec3 lookat2(2, 0, 3);

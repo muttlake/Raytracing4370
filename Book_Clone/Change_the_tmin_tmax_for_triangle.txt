@@ -1,0 +1,14 @@
+change the tmin_and tmax_for triangle hit:
+
+sphere hit:
+
+if (temp < t_max && temp > t_min) {
+//t_max is t1, t_min is t0
+
+
+xy_plane hit:
+
+ if (t < t0 || t > t1)
+
+
+Also add rec.normal to triangle.h
