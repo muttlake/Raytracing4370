@@ -134,6 +134,9 @@ triangle* loadTeapotObj() {
 	glm::mat4 R = glm::rotate(glm::mat4(1.0f), glm::radians(-50.0f), glm::vec3(0,0,1));
 	glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, -5.0f, 0.0f));
 	glm::mat4 M = T * R * S;
+
+	glm::mat3 N = glm::mat3(M);
+	N = glm::transpose(glm::inverse(N));
 	
 	for (int v_index = 0; v_index < NUM_TEAPOT_VERTICES; v_index++)
 	{
@@ -143,9 +146,8 @@ triangle* loadTeapotObj() {
 		vpositions[v_index] = glm::vec3(transformed_v[0], transformed_v[1], transformed_v[2]);
 
 		glm::vec3 n = vnormals[v_index];
-		glm::vec4 transformed_n = glm::vec4(n[0], n[1], n[2], 1.0f);
-		transformed_n = M * transformed_n;
-		vnormals[v_index] = glm::vec3(transformed_n[0], transformed_n[1], transformed_n[2]);
+		glm::vec3 transformed_n = N * n;
+		vnormals[v_index] = glm::normalize(transformed_n);
 	}
 
 	outFileName = "contentsObj_World.txt";
