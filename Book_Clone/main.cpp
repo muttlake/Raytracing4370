@@ -25,7 +25,6 @@ material* loadBrickMaterial()
 {
 	int nx, ny, nn;
 	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/bricks.png", &nx, &ny, &nn, 0);
-
 	material *mat = new lambertian(new image_texture(tex_data, nx, ny));
 	return mat;
 }
@@ -34,7 +33,6 @@ texture* loadSphereCheckerTexture()
 {
 	int nx, ny, nn;
 	unsigned char *tex_data = stbi_load("/Users/timothymshepard/Cosc4370/RayTracer/Book_Clone/checker.png", &nx, &ny, &nn, 0);
-
 	return new image_texture(tex_data, nx, ny);
 }
 
@@ -251,7 +249,7 @@ hitable *test_scene() {
 
 hitable *spheres_only_project_scene() {
     int n = 4;
-    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.2, 0.1, 0.1)), new constant_texture( vec3(0.7, 0.1, 0.1)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
     hitable **list = new hitable*[n+1];
@@ -264,13 +262,13 @@ hitable *spheres_only_project_scene() {
 
 hitable *first_triangle_project_scene() {
     int n = 4;
-    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.2, 0.1, 0.1)), new constant_texture( vec3(0.7, 0.1, 0.1)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
     hitable **list = new hitable*[n+1];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), vec3(0,0,1), vec3(0,0,1), glm::vec2(0.05, 0.1), glm::vec2(-0, -0), glm::vec2(0.05, -0), loadBrickMaterial());
+    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), vec3(0,0,1), vec3(0,0,1), glm::vec2(0.5, 0.99), glm::vec2(0.4, 0.98), glm::vec2(0.5, 0.98), loadBrickMaterial());
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
 
     return new hitable_list(list,n);
@@ -282,10 +280,10 @@ hitable *project_scene() {
     triangle* all_teapot_triangles = loadTeapotObj();
     //NUM_TEAPOT_TRIANGLES = 6320;
 
-    texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
+    texture *red_checker = new checker_texture( new constant_texture( vec3(0.2, 0.1, 0.1)), new constant_texture( vec3(0.7, 0.1, 0.1)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
-    int n = 1003;
+    int n = 6323;
     hitable **list = new hitable*[n];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
