@@ -44,7 +44,6 @@ vec3 color(const ray& r, hitable *world, int depth) {
     {
         ray scattered;
         vec3 attenuation;
-	//if (depth < 3 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 	if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 	{
        		return attenuation*color(scattered, world, depth+1);
@@ -286,7 +285,7 @@ hitable *project_scene() {
     texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
-    int n = 103;
+    int n = 1003;
     hitable **list = new hitable*[n];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));

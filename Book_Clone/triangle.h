@@ -3,8 +3,18 @@
 
 #include <glm_dir/glm/glm.hpp>
 #include <glm_dir/glm/gtc/type_ptr.hpp>
+#include "math.h"
 
 #include "hitable.h"
+
+float distance(vec3 pt1, vec3 pt2)
+{
+	float sum_of_squares = (pt2[0] - pt1[0]) * (pt2[0] - pt1[0]);
+	sum_of_squares += (pt2[1] - pt1[1]) * (pt2[1] - pt1[1]);
+	sum_of_squares += (pt2[2] - pt1[2]) * (pt2[2] - pt1[2]);
+	
+	return sqrt(sum_of_squares);
+}
 
 class triangle: public hitable  {
     public:
@@ -20,23 +30,35 @@ class triangle: public hitable  {
 
 vec3 triangle::get_triangle_barycentric_coords(vec3& p) const
 {
-	vec3 e0 = v1 - v0;
-	vec3 e1 = v2 - v0;
-	vec3 e2 = p  - v0;
+	float dA = distance(v0, p);
+	float dB = distance(v1, p);
+	float dC = distance(v2, p);
 	
-	float d00 = dot(e0, e0);
-	float d01 = dot(e0, e1);
-	float d11 = dot(e1, e1);
-	float d20 = dot(e2, e0);
-	float d21 = dot(e2, e1);
+	float sum = dA + dB + dC;
+
+	float coefA = dA / sum;
+	float coefB = dB / sum;
+	float coefC = dC / sum;
 	
-	float denom = d00 * d11 - d01 * d01;
+	return vec3(coefA, coefB, coefC);
 	
-	float alph = (d11 * d20 - d01 * d21) / denom;
-	float beta = (d00 * d21 - d01 * d20) / denom;
-	float gamm = 1.0f - alph - beta;
-	
-	return vec3(alph, beta, gamm);
+	//vec3 e0 = v1 - v0;
+	//vec3 e1 = v2 - v0;
+	//vec3 e2 = p  - v0;
+	//
+	//float d00 = dot(e0, e0);
+	//float d01 = dot(e0, e1);
+	//float d11 = dot(e1, e1);
+	//float d20 = dot(e2, e0);
+	//float d21 = dot(e2, e1);
+	//
+	//float denom = d00 * d11 - d01 * d01;
+	//
+	//float alph = (d11 * d20 - d01 * d21) / denom;
+	//float beta = (d00 * d21 - d01 * d20) / denom;
+	//float gamm = 1.0f - alph - beta;
+	//
+	//return vec3(alph, beta, gamm);
 }
 
 bool triangle::hit(const ray& r, float t0, float t1, hit_record& rec) const
