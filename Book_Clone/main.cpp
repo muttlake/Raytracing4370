@@ -44,6 +44,7 @@ vec3 color(const ray& r, hitable *world, int depth) {
     {
         ray scattered;
         vec3 attenuation;
+	//if (depth < 3 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 	if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 	{
        		return attenuation*color(scattered, world, depth+1);
@@ -173,47 +174,53 @@ triangle* loadTeapotObj() {
 
 	vec3 vert0, vert1, vert2;
 	vec3 n0, n1, n2;
-	float u0, u1, u2;
-	float v0, v1, v2;
+	glm::vec2 tex0, tex1, tex2;
 	material* mp = loadBrickMaterial();
 
 	for (int v_index = 0; v_index < NUM_TEAPOT_VERTICES; v_index++)
 	{
-		
+		// Some of Teapot vt go to 2 so need to Wrap them around	
+		float vtu = vtex_coords[v_index][0];
+		if (vtu > 1) vtu = vtu - 1;
+
+		float vtv = vtex_coords[v_index][1];
+		if (vtv > 1) vtv = vtv - 1;
+
 		if (((v_index+1) % 3) == 1)
 		{
 			vert0 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
 			n0 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
-			u0 = vtex_coords[v_index][0];
-			v0 = vtex_coords[v_index][1];
+			//tex0 = glm::vec2(vtex_coords[v_index][0], vtex_coords[v_index][1]);
+			tex0 = glm::vec2(vtu, vtv);
 		}
 		else if (((v_index+1) % 3) == 2)
 		{
 			vert1 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
 			n1 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
-			u1 = vtex_coords[v_index][0];
-			v1 = vtex_coords[v_index][1];
+			//tex1 = glm::vec2(vtex_coords[v_index][0], vtex_coords[v_index][1]);
+			tex1 = glm::vec2(vtu, vtv);
 		}
 		else // (((v_index+1) % 3) == 0)
 		{
 			vert2 = vec3(vpositions[v_index][0], vpositions[v_index][1], vpositions[v_index][2]);
 			n2 = vec3(vnormals[v_index][0], vnormals[v_index][1], vnormals[v_index][2]);
-			u2 = vtex_coords[v_index][0];
-			v2 = vtex_coords[v_index][1];
+			//tex2 = glm::vec2(vtex_coords[v_index][0], vtex_coords[v_index][1]);
+			tex2 = glm::vec2(vtu, vtv);
 			
 			vec3 normal = (n0 + n1 + n2) / 3;
-			float u_value = (u0 + u1 + u2) / 3;
-			float v_value = (v0 + v1 + v2) / 3;
 			
 			outFile << "Triangle : " << t_index << std::endl;
 			outFile << "	vert0: " << vert0[0] << " , " << vert0[1] << " , " << vert0[2] << std::endl;
 			outFile << "	vert1: " << vert1[0] << " , " << vert1[1] << " , " << vert1[2] << std::endl;
 			outFile << "	vert2: " << vert2[0] << " , " << vert2[1] << " , " << vert2[2] << std::endl;
-			outFile << "	normal: " << normal[0] << " , " << normal[1] << " , " << normal[2] << std::endl;
-			outFile << "	u_value: " << u_value << std::endl;
-			outFile << "	v_value: " << v_value << std::endl;
+			outFile << "	norm0: " << n0[0] << " , " << n0[1] << " , " << n0[2] << std::endl;
+			outFile << "	norm1: " << n1[0] << " , " << n1[1] << " , " << n1[2] << std::endl;
+			outFile << "	norm2: " << n2[0] << " , " << n2[1] << " , " << n2[2] << std::endl;
+			outFile << "	tex0: " << tex0[0] << " , " << tex0[1] << std::endl;
+			outFile << "	tex1: " << tex1[0] << " , " << tex1[1] << std::endl;
+			outFile << "	tex2: " << tex2[0] << " , " << tex2[1] << std::endl;
 			
-			all_triangles[t_index] = triangle(vert0, vert1, vert2, normal, u_value, v_value, mp);
+			all_triangles[t_index] = triangle(vert0, vert1, vert2, n0, n1, n2, tex0, tex1, tex2, mp);
 			
 			t_index++;
 		}
@@ -236,7 +243,8 @@ hitable *test_scene() {
     int n = 1;
 
     hitable **list = new hitable*[n+1];
-    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), vec3(0,0,1), 0.5, 0.5, loadBrickMaterial());
+    list[0] = new triangle(vec3(-10, 0, 0), vec3(0, 0, 10), vec3(10, 0, 0), vec3(-0.167119, 0.729682, 0.66305), vec3(-0.0420223,0.611283,0.790296), vec3(-0.0513106,0.746547,0.663351), glm::vec2(0.70, 0.92), glm::vec2(0.6, 0.93), glm::vec2(0.6, 0.92), loadBrickMaterial());
+    //list[0] = new triangle(vec3(7.13122, 7.98386, 98.52), vec3(16.2455, 7.65937, 99.3075), vec3(16.1918, 8.48378, 98.52), vec3(-0.167119, 0.729682, 0.66305), vec3(-0.0420223,0.611283,0.790296), vec3(-0.0513106,0.746547,0.663351), glm::vec2(0.70, 0.92), glm::vec2(0.6, 0.93), glm::vec2(0.6, 0.92), loadBrickMaterial());
 
     return new hitable_list(list,n);
 }
@@ -263,7 +271,7 @@ hitable *first_triangle_project_scene() {
     hitable **list = new hitable*[n+1];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
-    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), 0.5, 0.5, loadBrickMaterial());
+    list[2] = new triangle(vec3(-5, 0, 0), vec3(0, 0, 5), vec3(5, 0, 0), vec3(0,0,1), vec3(0,0,1), vec3(0,0,1), glm::vec2(0.05, 0.1), glm::vec2(-0, -0), glm::vec2(0.05, -0), loadBrickMaterial());
     list[3] = new sphere(vec3(-8, -16, 5), 5.0, new dielectric(1.5));
 
     return new hitable_list(list,n);
@@ -278,7 +286,7 @@ hitable *project_scene() {
     texture *red_checker = new checker_texture( new constant_texture( vec3(0.1, 0.1, 0.1)), new constant_texture( vec3(0.9, 0.2, 0.2)), 0.50);
     texture *plane_checker = new plane_checker_texture( new constant_texture( vec3(0.5, 0.5, 0.5)), new constant_texture( vec3(0.1, 0.1, 0.1)), -30.0);
 
-    int n = 6323;
+    int n = 103;
     hitable **list = new hitable*[n];
     list[0] = new xy_plane(0.0, new texture_metal(plane_checker, 0.0));
     list[1] = new sphere(vec3(15, 2, 6), 6.0, new texture_metal(red_checker, 0.0));
@@ -322,8 +330,8 @@ int main(int argc, char *argv[]) {
     hitable *world;
     //world = test_scene();
     //world = spheres_only_project_scene();
-    world = first_triangle_project_scene();
-    //world = project_scene();
+    //world = first_triangle_project_scene();
+    world = project_scene();
 
     vec3 lookfrom2(0, -70, 15);
     vec3 lookat2(2, 0, 3);

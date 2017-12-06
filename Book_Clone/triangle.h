@@ -1,29 +1,43 @@
 #ifndef TRIANGLEH
 #define TRIANGLEH
 
+#include <glm_dir/glm/glm.hpp>
+#include <glm_dir/glm/gtc/type_ptr.hpp>
+
 #include "hitable.h"
-
-
-void get_triangle_uv(const vec3& p, float& u, float& v)
-{
-	float phi = atan2(p.z(), p.x());
-	float theta = asin(p.y());
-	u = 1 - (phi + M_PI) / (2 * M_PI);
-	v = (theta + M_PI/2) / M_PI;
-}
-
 
 class triangle: public hitable  {
     public:
         triangle() {}
-        triangle(vec3 _v0, vec3 _v1, vec3 _v2, vec3 _n, float _u, float _v, material *mat) : v0(_v0), v1(_v1), v2(_v2), n(_n), tex_u(_u), tex_v(_v), mp(mat) {};
+        triangle(vec3 _vv0, vec3 _vv1, vec3 _vv2, vec3 _nn0, vec3 _nn1, vec3 _nn2, glm::vec2 _tt0, glm::vec2 _tt1, glm::vec2 _tt2, material *mat) : v0(_vv0), v1(_vv1), v2(_vv2), n0(_nn0), n1(_nn1), n2(_nn2), tex0(_tt0), tex1(_tt1), tex2(_tt2),  mp(mat) {};
         virtual bool hit(const ray& r, float t0, float t1, hit_record& rec) const;
+	vec3 get_triangle_barycentric_coords(vec3& p) const;
         vec3 v0, v1, v2;
-	vec3 n;
-	float tex_u, tex_v;
+	vec3 n0, n1, n2;
+	glm::vec2 tex0, tex1, tex2;
         material  *mp;
 };
 
+vec3 triangle::get_triangle_barycentric_coords(vec3& p) const
+{
+	vec3 e0 = v1 - v0;
+	vec3 e1 = v2 - v0;
+	vec3 e2 = p  - v0;
+	
+	float d00 = dot(e0, e0);
+	float d01 = dot(e0, e1);
+	float d11 = dot(e1, e1);
+	float d20 = dot(e2, e0);
+	float d21 = dot(e2, e1);
+	
+	float denom = d00 * d11 - d01 * d01;
+	
+	float alph = (d11 * d20 - d01 * d21) / denom;
+	float beta = (d00 * d21 - d01 * d20) / denom;
+	float gamm = 1.0f - alph - beta;
+	
+	return vec3(alph, beta, gamm);
+}
 
 bool triangle::hit(const ray& r, float t0, float t1, hit_record& rec) const
 {
@@ -64,12 +78,16 @@ bool triangle::hit(const ray& r, float t0, float t1, hit_record& rec) const
 	}
 	else
 	{
-	        rec.p = r.point_at_parameter(t);
-	        rec.u = tex_u;
-	        rec.v = tex_v;
 	        rec.t = t;
+	        rec.p = r.point_at_parameter(t);
+		
+		vec3 bary = get_triangle_barycentric_coords(rec.p);
+
+	        rec.u = tex0[0]*bary[0] + tex1[0]*bary[1] + tex2[0]*bary[2];
+	        rec.v = tex0[1]*bary[0] + tex1[1]*bary[1] + tex2[1]*bary[2];
+		rec.normal = n0*bary[0] + n1*bary[1] + n2*bary[2];
+
 	        rec.mat_ptr = mp;
-		rec.normal = n;
 	        return true;
 	}
     }
