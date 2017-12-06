@@ -117,11 +117,11 @@ class dielectric : public material {
                 reflect_prob = schlick(cosine, ref_idx);
              else 
                 reflect_prob = 1.0;
-             //if (drand48() < reflect_prob) 
-             //   scattered = ray(rec.p, reflected);
-             //else 
-             //   scattered = ray(rec.p, refracted);
-             scattered = ray(rec.p, refracted);
+             if (drand48() < reflect_prob) 
+             	scattered = ray(rec.p, reflected);
+             else 
+             	scattered = ray(rec.p, refracted);
+             //scattered = ray(rec.p, refracted);
              return true;
         }
 
